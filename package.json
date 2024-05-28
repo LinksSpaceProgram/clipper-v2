@@ -1,0 +1,15 @@
+{
+  "name": "clipper-v2",
+  "version": "1.0.0",
+  "description": "A simple utility to replace video trim functionality that was taken away from Windows Media Player",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^30.0.8"
+  }
+}
