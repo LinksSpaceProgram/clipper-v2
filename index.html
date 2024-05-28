@@ -18,24 +18,64 @@
 
         <div class="row" id="row0">
 
-          <div class="cell"><p>1. Select a video file</p></div>
-          <div class="cell"><p>2. Trim</p></div>
-          <div class="cell"><p>3. Options</p></div>
-          <div class="cell"><p>4. Export</p></div>
+          <div class="cell" id="fileSelectPanel">
+            <p>1. Select a file</p>
+            <button id="fileSelectButton" class="noFileSelected"><p id="fileSelectButtonText" class="noFileSelected">✖</p><span class="loader" id="spinner"></span>
+
+              <div id="loading-bar">
+                <div id="progress"></div>
+              </div>
+
+            </button>
+          </div>
+
+          <div class="cell" id="trimPanel">
+            <p>2. Trim</p>
+            <section id="timelineContainer">
+
+              <div id="video-container">
+
+                <div id="video-preview">
+                  <div id="sliders">
+
+                    <div id="start-slider" class="slider"></div>
+                    <div id="end-slider" class="slider"></div>
+
+                </div>
+                </div>
+
+            </div>
+
+            <div id="timecodes">
+
+                <div id="start-timecode" class="timecode">00:00</div>
+                <div id="end-timecode" class="timecode">00:00</div>
+
+            </div>
+
+            <div id="current-frame">
+                <!-- Current frame image will be displayed here -->
+            </div>
+
+            </section>
+          </div>
 
         </div>
 
         <div class="row" id="row1">
 
-          <div class="cell" id="fileSelectPanel">
+          <div class="cell">
             
-            <button id="fileSelectButton" class="noFileSelected">✖</button>
-
+            <p>3. Adjust Quality</p>
+          
+          </div>
+          <div class="cell">
+            
+            <p>4. Export</p>
+          
           </div>
 
-          <div class="cell">Panel 2</div>
-          <div class="cell">Panel 3</div>
-          <div class="cell">Panel 4</div>
+        </div>
 
     </section>
       
