@@ -5,18 +5,37 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'"/>
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'"/>
-
     <script defer src="render.js"></script>
     <link rel="stylesheet" href="index.css">
 
     <title>Clipper</title>
+
   </head>
 
   <body>
 
     <section>
 
-      <h1>Hello</h1>
+        <div class="row" id="row0">
+
+          <div class="cell"><p>1. Select a video file</p></div>
+          <div class="cell"><p>2. Trim</p></div>
+          <div class="cell"><p>3. Options</p></div>
+          <div class="cell"><p>4. Export</p></div>
+
+        </div>
+
+        <div class="row" id="row1">
+
+          <div class="cell" id="fileSelectPanel">
+            
+            <button id="fileSelectButton" class="noFileSelected">✖</button>
+
+          </div>
+
+          <div class="cell">Panel 2</div>
+          <div class="cell">Panel 3</div>
+          <div class="cell">Panel 4</div>
 
     </section>
       
