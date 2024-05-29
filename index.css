@@ -272,6 +272,28 @@ section {
 
 }
 
+#start-timecode {
+
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #495279;
+    font-size: 150%;
+    width: 25%;
+    text-align: center;
+    resize: none;
+
+}
+
+#end-timecode {
+
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #495279;
+    font-size: 150%;
+    width: 25%;
+    text-align: center;
+    resize: none;
+
+}
+
 .timecode {
 
     width: 50px;
