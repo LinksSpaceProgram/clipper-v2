@@ -84,12 +84,12 @@ ipcMain.handle('get-video', async (event, filePath) => {
           if (percentageCompleted > 100) { percentageCompleted = 100 };
           //Send on the progressBar channel to ipcRenderer
           win.webContents.send('progressBar', percentageCompleted);
-          console.log(percentageCompleted);
+          //console.log(percentageCompleted);
 
         })
         .on('end', () => {
           
-          console.log('Frames extraction finished');
+          //console.log('Frames extraction finished');
           //Make sure the progress bar ends at 100
           win.webContents.send('progressBar', 100);
           resolve(metadata);
@@ -140,11 +140,12 @@ async function deleteFrames() {
             fs.unlink(path.join(framesOutputPath, file), err => {
 
                 if (err) { console.error('Error deleting file:', err);} 
-                else { console.log('File deleted successfully:', file);}
+                //else { console.log('File deleted successfully:', file);}
 
             });
         });
-
+        
+        console.log("Frame deletion finished")
         resolve(); 
 
       });

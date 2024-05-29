@@ -87,6 +87,7 @@ section {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
 
 }
 
@@ -180,6 +181,7 @@ section {
     width: 0%;
     font-size: 250%;
     color: #0c3e80;
+    transition: width 0.5s ease-in;
 
 }
 
@@ -214,36 +216,44 @@ section {
 }
 
 #video-container {
+
     width: 80%;
     height: 20%;
     border: 2px solid cyan;
     display: flex;
     align-items: center;
     justify-content: center;
+
 }
 
-#video-preview {
+#video-timeline {
+
     width: 100%;
     height: 100%;
     display: flex;
     overflow: hidden;
     position: relative;
+
 }
 
 #sliders {
+
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
     left: 0;
+
 }
 
 .slider {
-    width: 10px;
+
+    width: 5px;
     height: 100%;
     background-color: green;
     position: absolute;
     cursor: pointer;
+
 }
 
 #start-slider {
@@ -255,27 +265,34 @@ section {
 }
 
 #timecodes {
+
     width: 80%;
     display: flex;
     justify-content: space-between;
+
 }
 
 .timecode {
+
     width: 50px;
     height: 50px;
-    background-color: yellow;
     display: flex;
     align-items: center;
     justify-content: center;
     color: black;
+
 }
 
 #current-frame {
+
     width: 50%;
     height: 50%;
-    border: 2px solid purple;
+    border: 2px solid gray;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: black;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
 }

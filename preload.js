@@ -1,4 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const path = require('path');
 
 const API = {
 
@@ -50,6 +51,12 @@ const API = {
         return video;
 
     },
+
+    getFramePath: (frameFilename) => {
+
+        return `file://${encodeURI(path.join(__dirname, '/frames/', frameFilename).replace(/\\/g, '/'))}`
+
+    }
 
 }
 
