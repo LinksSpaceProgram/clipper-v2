@@ -145,7 +145,6 @@ async function deleteFrames() {
             });
         });
         
-        console.log("Frame deletion finished")
         resolve(); 
 
       });

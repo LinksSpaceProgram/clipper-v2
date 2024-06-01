@@ -207,7 +207,6 @@ section {
 
     width: 90%;
     height: 90%;
-    border: 2px solid red;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -219,7 +218,8 @@ section {
 
     width: 80%;
     height: 20%;
-    border: 2px solid cyan;
+    border: 2px solid #0c3e80;
+    border-radius: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -250,9 +250,12 @@ section {
 
     width: 5px;
     height: 100%;
-    background-color: green;
+    background-color: lightblue;
     position: absolute;
     cursor: pointer;
+    border: 0;
+    border-right: 2px solid lightblue;
+    border-radius: 2px;
 
 }
 
@@ -310,6 +313,7 @@ section {
     width: 50%;
     height: 50%;
     border: 2px solid gray;
+    background-color: gray;
     display: flex;
     align-items: center;
     justify-content: center;

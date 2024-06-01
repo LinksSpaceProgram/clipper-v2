@@ -1,10 +1,5 @@
-console.log("Render")
-
-
 window.api.createProgressUpdater();
 window.api.addFileSelectEventListener(async () => {
-
-    //console.log('File Select button clicked');
 
     const filePath = await window.api.openFileDialog();
 
@@ -63,17 +58,20 @@ window.api.addFileSelectEventListener(async () => {
 
 });
 
+//Definitions of all relevant elements
+const startSlider = document.getElementById('start-slider');        //The left slider
+const endSlider = document.getElementById('end-slider');     //The right slider
+const startTimecode = document.getElementById('start-timecode');     //Timecode of the start (this should always be 00:00 I think)
+const endTimecode = document.getElementById('end-timecode');     //The duration of the video
+const videoPreview = document.getElementById('video-timeline');      //The timeline video
+const currentFrame = document.getElementById('current-frame');      //Current frame preview
+let isDraggingStart = false;    //Is the user dragging the start slider?
+let isDraggingEnd = false;      //Is the user dragging the end bar?
+
+let updateSlider;
+
 function enableVideoControls(video) {
 
-    //Definitions of all relevant elements
-    const startSlider = document.getElementById('start-slider');        //The left slider
-    const endSlider = document.getElementById('end-slider');     //The right slider
-    const startTimecode = document.getElementById('start-timecode');     //Timecode of the start (this should always be 00:00 I think)
-    const endTimecode = document.getElementById('end-timecode');     //The duration of the video
-    const videoPreview = document.getElementById('video-timeline');      //The timeline video
-    const currentFrame = document.getElementById('current-frame');      //Current frame preview
-    let isDraggingStart = false;    //Is the user dragging the start slider?
-    let isDraggingEnd = false;      //Is the user dragging the end bar?
     let videoDuration = Math.floor(video.streams[0].duration) - 1;      //Rounded down and -1'd because we don't have a frame for the last second of the video
 
     //Helper function to format timecode
@@ -116,58 +114,78 @@ function enableVideoControls(video) {
     //Magic
     document.addEventListener('mousemove', (e) => {
 
-        // Get the size of the timeline 
+        // Get the size of the timeline
         const containerRect = videoPreview.getBoundingClientRect();
-        const containerWidth = containerRect.width - 5; //-5 to account for width of the slider
-        const pixelsPerSecond = containerWidth / videoDuration; //For slider-clipping purposes, find out how many pixels there are per second of video
-        let displayedTimeCode;  //Variable that holds the timecode which will be displayed in either of the textareas
+        const containerWidth = containerRect.width - 5; // -5 to account for width of the slider
+        const pixelsPerSecond = containerWidth / videoDuration; // For slider-clipping purposes, find out how many pixels there are per second of video
+    
+        // Function to update the slider position
+        updateSlider = (slider, otherSlider, timecodeElem, setTimecode = null) => {
+            let newPos;
 
-        //I am too lazy to respect DRY and this works so I'm not touching it
-        if (isDraggingStart) {
+            if (setTimecode !== null) {
+
+                // Calculate position based on the given time in seconds
+                newPos = setTimecode * pixelsPerSecond;
+                newPos = Math.min(newPos, containerWidth); // Ensure the position is within the container
+
+            } else {
+
+                // Calculate position based on the mouse event
+                newPos = Math.max(0, Math.min(e.clientX - containerRect.left, containerWidth));
+                newPos = Math.floor(newPos / pixelsPerSecond) * pixelsPerSecond; // Snap to the nearest second
+
+            }
+    
+            if (slider === startSlider) {
+
+                if (newPos > containerWidth - parseFloat(otherSlider.style.right) - slider.clientWidth) {
+                    newPos = containerWidth - parseFloat(otherSlider.style.right) - slider.clientWidth;
+                }
+
+                slider.style.left = `${newPos}px`;
+
+            } else if (slider === endSlider) {
+
+                newPos = containerWidth - newPos;
+                if (newPos > containerWidth - parseFloat(otherSlider.style.left) - slider.clientWidth) {
+                    newPos = containerWidth - parseFloat(otherSlider.style.left) - slider.clientWidth;
+                }
+
+                slider.style.right = `${newPos}px`;
+
+            }
             
-            //Find out where the cursor is supposed to go, and make sure it doesn't leave the container box
-            let newLeft = Math.max(0, Math.min(e.clientX - containerRect.left, containerWidth));
-            newLeft = Math.floor(newLeft / pixelsPerSecond) * pixelsPerSecond; // Snap to the nearest second
 
-            //Make sure the left (start) slider can never go further right than the right (end) slider
-            if (newLeft > parseFloat(endSlider.style.left) - startSlider.clientWidth) { newLeft = parseFloat(endSlider.style.left) - startSlider.clientWidth; }
+    
+            const time = slider === startSlider ?
+                Math.round((newPos / containerWidth) * videoDuration) :
+                Math.round((1 - (newPos / containerWidth)) * videoDuration);
+    
+            const displayedTimeCode = formatTimecode(Math.floor(time));
+            timecodeElem.innerText = displayedTimeCode;
+            timecodeElem.value = displayedTimeCode;
+    
+            updateCurrentFrame(Math.floor(time));
+        };
+    
+        if (isDraggingStart) { updateSlider(startSlider, endSlider, startTimecode); }
+    
+        if (isDraggingEnd) { updateSlider(endSlider, startSlider, endTimecode); }
 
-            //Adjust the position of the slider based on the left attribute
-            startSlider.style.left = `${newLeft}px`;
-
-            //Figure out what time our slider position corresponds to
-            const startTime = Math.round(((newLeft / containerWidth) * videoDuration));
-            //Get the timecode we're supposed to be displaying
-            displayedTimeCode = formatTimecode(Math.floor(startTime))
-            startTimecode.innerText = displayedTimeCode;
-            startTimecode.value = displayedTimeCode;
-            //Update the thumbnail in the preview container
-            updateCurrentFrame(Math.floor(startTime));
-
-        }
-
-        if (isDraggingEnd) {
-
-            //Find out where the cursor is supposed to go, and make sure it doesn't leave the container box
-            let newRight = Math.max(0, Math.min(containerWidth - (e.clientX - containerRect.left), containerWidth));
-            newRight = Math.floor(newRight / pixelsPerSecond) * pixelsPerSecond; // Snap to nearest second
-            
-            //Make sure the right (end) slider can never go further left than the left (start) slider
-            if (newRight > containerWidth - parseFloat(startSlider.style.left) - endSlider.clientWidth) { newRight = containerWidth - parseFloat(startSlider.style.left) - endSlider.clientWidth;}
-            
-            //Figure out what time our slider position corresponds to
-            endSlider.style.left = `${containerWidth - newRight}px`;
-            const endTime = Math.round(((containerWidth - newRight) / containerWidth) * videoDuration);
-            //Get the timecode we're supposed to be displaying
-            displayedTimeCode = formatTimecode(Math.floor(endTime));
-            endTimecode.innerText = displayedTimeCode;
-            endTimecode.value = displayedTimeCode;
-            //Update the thumbnail in the preview container
-            updateCurrentFrame(Math.floor(endTime));
-        }
     });
 
 }
+
+//Function to set slider by time in seconds
+const setSliderByTime = (slider, timeInSeconds, timecodeElem) => {
+
+    let otherSlider;
+    if (slider === startSlider) { otherSlider = endSlider; } 
+    else { otherSlider = startSlider; }
+    updateSlider(slider, otherSlider, timecodeElem, timeInSeconds);
+
+};
 
 //This function adds the input handling and validation to the timecode textareas
 function addTextAreaHandlers() {
@@ -179,6 +197,7 @@ function addTextAreaHandlers() {
         let input = e.srcElement.value; 
         const timecodeRegex = /^([0-5]?\d):([0-5]?\d)$/;
         const wholeNumberRegex = /^\d+$/;
+        let totalSeconds;
 
         if (timecodeRegex.test(input)) {
 
@@ -186,14 +205,15 @@ function addTextAreaHandlers() {
             const match = input.match(timecodeRegex);
             const minutes = parseInt(match[1], 10);
             const seconds = parseInt(match[2], 10);
-            const totalSeconds = minutes * 60 + seconds;
+            totalSeconds = minutes * 60 + seconds;
+
             //Send to our helper function for formatting
             output = formatTimecode(totalSeconds);
 
         } else if (wholeNumberRegex.test(input)) {
 
             //If the user has just entered a number, check that it's a whole number and send it off to the helper function for formatting
-            const totalSeconds = parseInt(input, 10);
+            totalSeconds = parseInt(input, 10);
             output = formatTimecode(totalSeconds);
 
         } else {
@@ -202,13 +222,9 @@ function addTextAreaHandlers() {
             output = "";
 
         }
-        
-        //TODO: Input validation of video length
-        //TODO: Input validation of overlapping times (start>end, end<start) 
-        //TODO: Move sliders depending on entered value
 
-        e.srcElement.value = output;        //The actual value of the element is stored here...
-        e.srcElement.innerText = output;    //But this is the visual representation.
+        if (e.srcElement.id === 'start-timecode') { setSliderByTime(startSlider, totalSeconds, e.srcElement); } 
+        else { setSliderByTime(endSlider, totalSeconds, e.srcElement); }
 
     }
 
